@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import tweepy
 import pickle
@@ -6,7 +7,7 @@ import nltk
 from nltk.corpus import stopwords
 
 # ---------------- API KEYS ----------------
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAIkl9gEAAAAA1jr9Vt5bHFhbENzilBttI0EHrdI%3DllppWdz477J1vLlp2o8lXzByZG81tBYjiuzyi1E6p6YXjUh1oM"
+BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 
 # ---------------- NLTK ----------------
 nltk.download('stopwords')
