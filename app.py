@@ -1,31 +1,35 @@
 import streamlit as st
+import tweepy
 import pickle
 import re
-from nltk.corpus import stopwords
 import nltk
+from nltk.corpus import stopwords
 
-@st.cache_resource
-def load_stopwords():
-    nltk.download("stopwords")
-    return stopwords.words("english")
+# ---------------- API KEYS ----------------
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAIkl9gEAAAAA1jr9Vt5bHFhbENzilBttI0EHrdI%3DllppWdz477J1vLlp2o8lXzByZG81tBYjiuzyi1E6p6YXjUh1oM"
 
-@st.cache_resource
-def load_model_and_vectorizer():
-    with open("model.pkl", "rb") as model_file:
-        model = pickle.load(model_file)
+# ---------------- NLTK ----------------
+nltk.download('stopwords')
+stop_words = stopwords.words('english')
 
-    with open("vectorizer.pkl", "rb") as vectorizer_file:
-        vectorizer = pickle.load(vectorizer_file)
+# ---------------- LOAD MODEL ----------------
+with open("model.pkl", "rb") as model_file:
+    model = pickle.load(model_file)
 
-    return model, vectorizer
+with open("vectorizer.pkl", "rb") as vectorizer_file:
+    vectorizer = pickle.load(vectorizer_file)
 
-def predict_sentiment(text, model, vectorizer, stop_words):
-    text = re.sub("[^a-zA-Z]", " ", text)
+# ---------------- TWEEPY CLIENT ----------------
+client = tweepy.Client(bearer_token=BEARER_TOKEN)
+
+# ---------------- SENTIMENT FUNCTION ----------------
+def predict_sentiment(text):
+    text = re.sub('[^a-zA-Z]', ' ', text)
     text = text.lower()
     text = text.split()
 
     text = [word for word in text if word not in stop_words]
-    text = " ".join(text)
+    text = ' '.join(text)
 
     text_vector = vectorizer.transform([text])
 
@@ -33,29 +37,37 @@ def predict_sentiment(text, model, vectorizer, stop_words):
 
     return "Negative" if prediction == 0 else "Positive"
 
-def main():
-    st.title("AI Powered X Sentiment Analyzer")
+# ---------------- STREAMLIT UI ----------------
+st.title("AI Powered X Sentiment Analyzer")
 
-    stop_words = load_stopwords()
-    model, vectorizer = load_model_and_vectorizer()
+username = st.text_input("Enter X Username")
 
-    text_input = st.text_area("Enter text to analyze sentiment")
+if st.button("Analyze User Tweets"):
 
-    if st.button("Analyze"):
-        if text_input.strip() == "":
-            st.warning("Please enter some text")
+    try:
+        user = client.get_user(username=username)
+
+        user_id = user.data.id
+
+        tweets = client.get_users_tweets(
+            id=user_id,
+            max_results=5
+        )
+
+        if tweets.data:
+
+            for tweet in tweets.data:
+
+                sentiment = predict_sentiment(tweet.text)
+
+                if sentiment == "Positive":
+                    st.success(f"{tweet.text}\n\nSentiment: {sentiment}")
+
+                else:
+                    st.error(f"{tweet.text}\n\nSentiment: {sentiment}")
+
         else:
-            sentiment = predict_sentiment(
-                text_input,
-                model,
-                vectorizer,
-                stop_words
-            )
+            st.warning("No tweets found.")
 
-            if sentiment == "Positive":
-                st.success(f"Sentiment: {sentiment}")
-            else:
-                st.error(f"Sentiment: {sentiment}")
-
-if __name__ == "__main__":
-    main()
+    except Exception as e:
+        st.error(f"Error: {e}")
