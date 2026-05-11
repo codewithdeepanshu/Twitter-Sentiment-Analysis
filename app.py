@@ -12,38 +12,119 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------- CUSTOM CSS ----------
+# ---------- CSS ----------
 st.markdown("""
 <style>
 html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif;
-    background-color: #0f172a;
+    background: #020617;
     color: white;
+}
+
+.hero-bg {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    background: linear-gradient(135deg,#020617,#0f172a,#111827);
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(56,189,248,0.18);
+    animation: float 16s infinite ease-in-out;
+}
+
+.bubble:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    left: 8%;
+    top: 15%;
+}
+
+.bubble:nth-child(2) {
+    width: 220px;
+    height: 220px;
+    left: 75%;
+    top: 10%;
+    animation-delay: 2s;
+}
+
+.bubble:nth-child(3) {
+    width: 260px;
+    height: 260px;
+    left: 60%;
+    top: 65%;
+    animation-delay: 5s;
+}
+
+.bubble:nth-child(4) {
+    width: 180px;
+    height: 180px;
+    left: 20%;
+    top: 75%;
+    animation-delay: 7s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translateY(-70px) scale(1.15);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.4;
+    }
 }
 
 .main-title {
     text-align: center;
-    font-size: 52px;
-    font-weight: 800;
-    background: linear-gradient(to right, #00c6ff, #0072ff);
+    font-size: 58px;
+    font-weight: 900;
+    margin-top: -20px;
+    background: linear-gradient(to right, #00c6ff, #0072ff, #00e0ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 8px #00c6ff;
+    }
+    to {
+        text-shadow: 0 0 25px #00e0ff;
+    }
 }
 
 .sub-title {
     text-align: center;
-    color: #cbd5e1;
     font-size: 20px;
+    color: #cbd5e1;
     margin-bottom: 35px;
 }
 
 .glass-card {
     background: rgba(255,255,255,0.08);
-    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
     padding: 25px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0px 8px 32px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    transition: 0.3s ease;
     margin-bottom: 20px;
+}
+
+.glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 35px rgba(0,194,255,0.25);
 }
 
 .positive-card {
@@ -58,16 +139,34 @@ html, body, [class*="css"] {
     border-left: 8px solid #ffd700;
 }
 
-.metric-card {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
+.stButton>button {
+    width: 100%;
+    border-radius: 15px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    padding: 14px;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.04);
+    background: linear-gradient(90deg, #0072ff, #00e0ff);
+}
+
+.metric-box {
+    background: linear-gradient(135deg, #111827, #1e293b);
     border-radius: 20px;
-    padding: 20px;
+    padding: 22px;
     text-align: center;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
+    margin-top: 10px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.25);
 }
 
 .metric-number {
-    font-size: 35px;
+    font-size: 38px;
     font-weight: bold;
     color: #38bdf8;
 }
@@ -75,22 +174,6 @@ html, body, [class*="css"] {
 .metric-text {
     font-size: 18px;
     color: #cbd5e1;
-}
-
-.stButton>button {
-    width: 100%;
-    border-radius: 15px;
-    background: linear-gradient(90deg,#00c6ff,#0072ff);
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    padding: 12px;
-}
-
-.stButton>button:hover {
-    transform: scale(1.03);
-    background: linear-gradient(90deg,#0072ff,#00c6ff);
 }
 
 .footer {
@@ -101,16 +184,28 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- TITLE ----------
-st.markdown(
-    '<div class="main-title">🚀 AI Powered X Sentiment Analyzer</div>',
-    unsafe_allow_html=True
-)
+# ---------- BACKGROUND ----------
+st.markdown("""
+<div class="hero-bg">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
+""", unsafe_allow_html=True)
 
-st.markdown(
-    '<div class="sub-title">Analyze X/Twitter posts using Machine Learning & NLP</div>',
-    unsafe_allow_html=True
-)
+# ---------- TITLE ----------
+st.markdown("""
+<div class="main-title">
+🚀 AI Powered X Sentiment Analyzer
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="sub-title">
+Analyze X/Twitter posts and manual text using Machine Learning & NLP
+</div>
+""", unsafe_allow_html=True)
 
 # ---------- LOAD MODEL ----------
 @st.cache_resource
@@ -147,6 +242,7 @@ def predict_sentiment(text):
     ]
 
     text_clean = " ".join(text_clean)
+
     text_vector = vectorizer.transform([text_clean])
 
     if hasattr(model, "predict_proba"):
@@ -163,7 +259,11 @@ def predict_sentiment(text):
             return "Negative"
 
     prediction = model.predict(text_vector)[0]
-    return "Positive" if prediction == 1 else "Negative"
+
+    if prediction == 1:
+        return "Positive"
+    else:
+        return "Negative"
 
 
 # ---------- INPUT SECTION ----------
@@ -171,6 +271,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
     st.subheader("🔍 Analyze X User")
 
     username = st.text_input(
@@ -191,6 +292,7 @@ with col1:
 
 with col2:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
     st.subheader("✍️ Analyze Manual Text")
 
     manual_text = st.text_area(
@@ -227,7 +329,7 @@ if analyze_user:
 
     else:
         try:
-            with st.spinner("Fetching posts and analyzing sentiment..."):
+            with st.spinner("🤖 Fetching posts and analyzing sentiment..."):
                 user = client.get_user(username=username)
 
                 if user.data is None:
@@ -245,8 +347,8 @@ if analyze_user:
                         st.warning("No posts found.")
                     else:
                         positive_count = 0
-                        negative_count = 0
                         neutral_count = 0
+                        negative_count = 0
 
                         st.subheader("📌 Post Analysis")
 
@@ -281,7 +383,7 @@ if analyze_user:
 
                         with c1:
                             st.markdown(f"""
-                            <div class="metric-card">
+                            <div class="metric-box">
                                 <div class="metric-number">{len(tweets.data)}</div>
                                 <div class="metric-text">Total Posts</div>
                             </div>
@@ -289,7 +391,7 @@ if analyze_user:
 
                         with c2:
                             st.markdown(f"""
-                            <div class="metric-card">
+                            <div class="metric-box">
                                 <div class="metric-number">{positive_count}</div>
                                 <div class="metric-text">Positive</div>
                             </div>
@@ -297,7 +399,7 @@ if analyze_user:
 
                         with c3:
                             st.markdown(f"""
-                            <div class="metric-card">
+                            <div class="metric-box">
                                 <div class="metric-number">{neutral_count}</div>
                                 <div class="metric-text">Neutral</div>
                             </div>
@@ -305,7 +407,7 @@ if analyze_user:
 
                         with c4:
                             st.markdown(f"""
-                            <div class="metric-card">
+                            <div class="metric-box">
                                 <div class="metric-number">{negative_count}</div>
                                 <div class="metric-text">Negative</div>
                             </div>
